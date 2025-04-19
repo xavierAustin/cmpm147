@@ -188,7 +188,7 @@ function setup() {
     return generateFoliage(100,1,6,ColR(163,113,112),color(0,0,0,0));
   }
   slugs = [];
-  for (var i = floor(random(1,num/60)*random()); i > 0; i --){
+  for (var i = 1+floor(random(0,num/60)*random()); i > 0; i --){
     slugs.push(generateSlug());
   }
   leafs = [];
