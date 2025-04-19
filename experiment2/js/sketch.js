@@ -5,8 +5,9 @@
 // Here is how you might set up an OOP p5.js project
 // Note that p5.js looks for a file called sketch.js
 
-const cnvsSize = {x:600,y:600};
-const debug = 1;
+let cnvsSize;// = {x:600,y:600};
+let canvasContainer;
+let num;
 let slugs = [];
 let precompSqrtSubX = [];
 for (var i = 0; i < 10; i ++){
@@ -38,8 +39,26 @@ function DrawSlug(aTo,len){
   endShape();
 }
 
+function resizeScreen() {
+  console.log("Resizing...");
+  resizeCanvas(canvasContainer.width(), canvasContainer.height());
+  setup();
+  // redrawCanvas(); // Redraw everything based on new size
+}
+
 function setup() {
-  createCanvas(cnvsSize.x, cnvsSize.y,WEBGL);
+  //createCanvas(cnvsSize.x, cnvsSize.y,WEBGL);
+  canvasContainer = $("#canvas-container");
+  cnvsSize = {x:canvasContainer.width(), y:canvasContainer.height()};
+  num = max(cnvsSize.x,cnvsSize.y)/3;
+  let canvas = createCanvas(canvasContainer.width(), canvasContainer.height(),WEBGL);
+  canvas.parent("canvas-container");
+  
+  $(window).resize(function() {
+    resizeScreen();
+  });
+  //resizeScreen();
+  
   layer0 = createFramebuffer();
   layer1 = createFramebuffer();
   slugBuffer = createFramebuffer();
@@ -112,8 +131,8 @@ function setup() {
   }
   generateFoliage = function(len,pine,weight,col,back){
     temp = {
-      x : random(600),
-      y : random(600),
+      x : random(cnvsSize.x),
+      y : random(cnvsSize.y),
       rot : random(360),
       size : {x:random(80,100),xy:random(1.1,1.3)},
       seed : random(),
@@ -168,12 +187,12 @@ function setup() {
   generatePine = function (){
     return generateFoliage(100,1,6,ColR(163,113,112),color(0,0,0,0));
   }
-  //slugs = [];
+  slugs = [];
   for (var i = floor(sqrt(random(1,12))); i > 0; i --){
     slugs.push(generateSlug());
   }
   leafs = [];
-  for (var i = 0; i < 200; i ++){
+  for (var i = 0; i < num; i ++){
     leafs.push(generateLeaf());
     if(random() > 0.6){
       leafs.push(generatePine());
