@@ -49,9 +49,9 @@ function resizeScreen() {
 function setup() {
   //createCanvas(cnvsSize.x, cnvsSize.y,WEBGL);
   canvasContainer = $("#canvas-container");
-  cnvsSize = {x:canvasContainer.width(), y:canvasContainer.height()};
+  cnvsSize = {x:canvasContainer.width(), y:canvasContainer.height(), hx: canvasContainer.width()/2, hy: canvasContainer.height()/2};
   num = max(cnvsSize.x,cnvsSize.y)/3;
-  let canvas = createCanvas(canvasContainer.width(), canvasContainer.height(),WEBGL);
+  let canvas = createCanvas(cnvsSize.x, cnvsSize.y,WEBGL);
   canvas.parent("canvas-container");
   
   $(window).resize(function() {
@@ -65,8 +65,8 @@ function setup() {
   onehundred = Math.atan(40);
   generateSlug = function (){
     slug = {
-      x : cnvsSize.x/2+sqrt(random(90000))*random(-1,1),//randomGaussian(cnvsSize.x/2, cnvsSize.x/2),
-      y : cnvsSize.y/2+sqrt(random(90000))*random(-1,1),//randomGaussian(cnvsSize.y/2, cnvsSize.y/2),
+      x : cnvsSize.hx+random(cnvsSize.hx)*random(-1,1),//randomGaussian(cnvsSize.hx, cnvsSize.hx),
+      y : cnvsSize.hy+random(cnvsSize.hy)*random(-1,1),//randomGaussian(cnvsSize.hy, cnvsSize.hy),
       rot : random(360),
       rTo : 0,
       rToTo : floor(random(-50,51)),
@@ -79,7 +79,7 @@ function setup() {
         this.len = (sin(time))*30+120;
         //move back to center if off screen
         if(this.x > cnvsSize.x+140 || this.x < -140 || this.y > cnvsSize.y+140 || this.y < -140){
-          var myCntr = createVector(this.x-cnvsSize.x/2, this.y-cnvsSize.y/2);
+          var myCntr = createVector(this.x-cnvsSize.hx, this.y-cnvsSize.hy);
           var center = createVector(10,0);
           this.rTo = 0;
           this.rToPrev = 0;
@@ -103,7 +103,7 @@ function setup() {
         var ang = this.rot*Math.PI/180;
         var aTo = this.rTo*Math.PI/180;
         resetMatrix();
-        translate(this.x-cnvsSize.x/2, this.y-cnvsSize.y/2);
+        translate(this.x-cnvsSize.hx, this.y-cnvsSize.hy);
         rotate(ang);
         stroke(64,62,76,125);
         noFill();
@@ -127,6 +127,7 @@ function setup() {
         ellipse(             5*aTo,           0, 48, 48);
       }
     }
+	console.log('Generated slug at:'+slug.x+', '+slug.y);
     return slug;
   }
   generateFoliage = function(len,pine,weight,col,back){
@@ -141,7 +142,7 @@ function setup() {
         var sx = this.size.x;
         var sy = this.size.x*this.size.xy; 
         resetMatrix();
-        translate(this.x-cnvsSize.x/2, this.y-cnvsSize.y/2);
+        translate(this.x-cnvsSize.hx, this.y-cnvsSize.hy);
         rotate(ang);
         //stroke(64,62,76,alpha(back)/4);
         stroke(64,62,76,80);
@@ -187,8 +188,8 @@ function setup() {
   generatePine = function (){
     return generateFoliage(100,1,6,ColR(163,113,112),color(0,0,0,0));
   }
-  slugs = [];
-  for (var i = 1+floor(random(0,num/60)*random()); i > 0; i --){
+  slugs = [generateSlug()];
+  for (var i = floor(random(0,num/60)*random()); i > 0; i --){
     slugs.push(generateSlug());
   }
   leafs = [];
@@ -207,7 +208,7 @@ function setup() {
 
 function draw() {
   background(48,53,62);
-  image(layer0,-cnvsSize.x/2,-cnvsSize.y/2,cnvsSize.x,cnvsSize.y);
+  image(layer0,-cnvsSize.hx,-cnvsSize.hy,cnvsSize.x,cnvsSize.y);
   //background(48,53,62);
   //for(var i = 0; i < leafs.length; i ++){
   //  leafs[i].DrawSelf();
@@ -220,5 +221,5 @@ function draw() {
     slugs[i].Update();
   }
   slugBuffer.end();
-  image(slugBuffer,-cnvsSize.x/2,-cnvsSize.y/2,cnvsSize.x,cnvsSize.y);
+  image(slugBuffer,-cnvsSize.hx,-cnvsSize.hy,cnvsSize.x,cnvsSize.y);
 }
