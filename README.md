@@ -155,5 +155,3 @@ Here is the basic structure with stub or empty files in place.
 │   └── index.html
 └── README.md
 ```
-
-My github page didnt update for some reason so I'm modifying another file to commit and push again. Hopefully that fixes it!
